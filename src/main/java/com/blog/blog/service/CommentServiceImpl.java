@@ -47,11 +47,46 @@ public class CommentServiceImpl implements CommentService{
         //retrieving comment by commentId
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(()->new ResourceNotFoundException("Comment", "id", commentId));
+        //checking if retrieved comments belongs to given post
         if(!comment.getPost().getId().equals(post.getId())){
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belongs to post");
 
         }
         return convertToDto(comment);
+    }
+
+    @Override
+    public CommentDTO updateComment(long postId, long commentId, CommentDTO commentDTO) {
+        //retrieving post by postId
+        Post post = postRepository.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post", "id", postId));
+        //retrieving comment by commentId
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(()->new ResourceNotFoundException("Comment", "id", commentId));
+        //checking if retrieved comments belongs to given post
+        if(!comment.getPost().getId().equals(post.getId())){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belongs to post");
+        }
+        //updating information
+        comment.setBody(commentDTO.getBody());
+        comment.setName(commentDTO.getName());
+        comment.setEmail(commentDTO.getEmail());
+        //saving
+        Comment updatedComment = commentRepository.save(comment);
+        return convertToDto(updatedComment);
+    }
+
+    @Override
+    public void deleteComment(long postId, long commentId) {
+        //retrieving post by postId
+        Post post = postRepository.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post", "id", postId));
+        //retrieving comment by commentId
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(()->new ResourceNotFoundException("Comment", "id", commentId));
+        //checking if retrieved comments belongs to given post
+        if(!comment.getPost().getId().equals(post.getId())){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belongs to post");
+        }
+        commentRepository.delete(comment);
     }
 
     private CommentDTO convertToDto(Comment comment){
