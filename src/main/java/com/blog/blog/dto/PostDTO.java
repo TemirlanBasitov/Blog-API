@@ -2,6 +2,8 @@ package com.blog.blog.dto;
 
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 public class PostDTO {
     private Long id;
